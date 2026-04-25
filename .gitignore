@@ -6,3 +6,4 @@ dist
 *.local
 .vscode
 .idea
+data/dem/_source

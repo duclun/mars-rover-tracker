@@ -1,0 +1,15 @@
+{
+  "source": "synthetic-sinusoidal (M0 spike placeholder)",
+  "note": "Replace with real HiRISE DTM tile DTEEC_036081_1985_036147_1985_A01 for M3",
+  "width": 256,
+  "height": 256,
+  "minElev": -2614.474853515625,
+  "maxElev": -2435,
+  "bbox": {
+    "minLon": 77.1,
+    "minLat": 18.1,
+    "maxLon": 77.7,
+    "maxLat": 18.7
+  },
+  "bakedAt": "2026-04-25T20:10:22.630Z"
+}
