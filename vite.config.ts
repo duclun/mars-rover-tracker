@@ -4,6 +4,7 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import { resolve } from 'node:path';
 
 export default defineConfig({
+  base: process.env.VITE_BASE ?? '/',
   plugins: [
     react(),
     visualizer({ filename: 'dist/stats.html', gzipSize: true, brotliSize: true }),
@@ -21,5 +22,6 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./src/test-setup.ts'],
+    exclude: ['**/node_modules/**', '**/dist/**', 'tests/e2e/**'],
   },
 });
