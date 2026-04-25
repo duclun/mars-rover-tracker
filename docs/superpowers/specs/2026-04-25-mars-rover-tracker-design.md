@@ -383,14 +383,18 @@ Drag the scrubber -> `store.currentSol` updates -> `<Rover>` position interpolat
 
 ### Performance budget
 
-These are **targets until measured in M0**, not commitments. M0 will replace these with measured numbers.
+Measured 2026-04-25 (M0 spike, full-stack build: R3F + drei + postprocessing + GSAP + Zustand + zod).
 
-- Time to interactive: target < 3s on a fast connection.
+- Time to interactive: target < 3s on a fast connection (not yet measured; depends on texture streaming).
 - Target 60 fps on the orbit view (mid-tier laptop).
 - Target 30 fps on the surface view (mid-tier laptop).
-- Target initial bundle: < 800 KB gzipped (excluding textures, which stream). Likely tight; M0 spike measures it. If over, fallback ladder: drop `@react-three/postprocessing` for hand-rolled effects, lazy-load GSAP behind the dive trigger, code-split rover GLTFs.
+- Initial JS bundle: **326 KB gzipped** (1,168 KB uncompressed). Breakdown:
+  - Three.js + R3F + drei + postprocessing: 281.6 KB gzipped
+  - React + GSAP + Zustand + zod + app: 44.8 KB gzipped
+  - Budget headroom: 474 KB before the 800 KB ceiling. No fallbacks required.
+  - If postprocessing is ever dropped, total falls to ~275 KB gzipped.
 
-CI runs Playwright Lighthouse against these, but a regression flags as a warning, not a hard failure, until budgets are confirmed.
+CI runs Playwright Lighthouse against these, but a regression flags as a warning, not a hard failure, until fps budgets are measured on real hardware.
 
 ### Manual smoke checklist (`docs/smoke-checklist.md`)
 
