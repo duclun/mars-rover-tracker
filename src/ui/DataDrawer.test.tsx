@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { DataDrawer } from './DataDrawer';
 import { useAppStore } from '../store/useAppStore';
-import type { RoversJson } from '../data/types';
+import type { RoversJson, Waypoints } from '../data/types';
 
 const mockRovers: RoversJson = {
   perseverance: {
@@ -73,4 +73,42 @@ describe('DataDrawer', () => {
     expect(screen.getByText('18.4300°')).toBeInTheDocument();
     expect(screen.getByText('77.2200°')).toBeInTheDocument();
   });
+});
+
+const mockWaypoints: Waypoints = {
+  perseverance: [
+    { lat: 18.43, lon: 77.22, sol: 1, distKm: 0, note: 'Landed in Jezero' },
+    { lat: 18.44, lon: 77.23, sol: 500, distKm: 5.0, note: 'Sampling at Delta' },
+    { lat: 18.50, lon: 77.30, sol: 1840, distKm: 10.0, note: 'Current position' },
+  ],
+  curiosity: [
+    { lat: -4.81, lon: 137.38, sol: 1, distKm: 0, note: '' },
+  ],
+};
+
+it('shows waypoint note for activeSol', () => {
+  useAppStore.setState({
+    selectedRoverId: 'perseverance', drawerOpen: true,
+    waypoints: mockWaypoints, activeSol: 500,
+  });
+  render(<DataDrawer />);
+  expect(screen.getByText('Sampling at Delta')).toBeInTheDocument();
+});
+
+it('shows latest note when activeSol is null', () => {
+  useAppStore.setState({
+    selectedRoverId: 'perseverance', drawerOpen: true,
+    waypoints: mockWaypoints, activeSol: null,
+  });
+  render(<DataDrawer />);
+  expect(screen.getByText('Current position')).toBeInTheDocument();
+});
+
+it('shows em dash when note is empty', () => {
+  useAppStore.setState({
+    selectedRoverId: 'curiosity', drawerOpen: true,
+    waypoints: mockWaypoints, activeSol: null,
+  });
+  render(<DataDrawer />);
+  expect(screen.getByText('—')).toBeInTheDocument();
 });

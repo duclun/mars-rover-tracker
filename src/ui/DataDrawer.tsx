@@ -1,16 +1,43 @@
 import { useAppStore } from '../store/useAppStore';
+import type { Waypoint } from '../data/types';
+
+function findActiveWaypoint(
+  path: Waypoint[],
+  activeSol: number | null,
+): Waypoint | null {
+  if (path.length === 0) return null;
+  if (activeSol === null) return path[path.length - 1];
+  let result: Waypoint | null = null;
+  for (const wp of path) {
+    if (wp.sol <= activeSol) result = wp;
+  }
+  return result;
+}
 
 export function DataDrawer() {
   const rovers = useAppStore((s) => s.rovers);
   const selectedRoverId = useAppStore((s) => s.selectedRoverId);
   const drawerOpen = useAppStore((s) => s.drawerOpen);
   const setDrawerOpen = useAppStore((s) => s.setDrawerOpen);
+  const waypoints = useAppStore((s) => s.waypoints);
+  const activeSol = useAppStore((s) => s.activeSol);
+  const setActiveSol = useAppStore((s) => s.setActiveSol);
 
   if (!drawerOpen || !selectedRoverId || !rovers) return null;
 
   const rover = rovers[selectedRoverId as 'perseverance' | 'curiosity'];
   if (!rover) return null;
+
   const distKm = (rover.dist_total_m / 1000).toFixed(1);
+
+  const waypointPath = waypoints?.[selectedRoverId as 'perseverance' | 'curiosity'] ?? [];
+  const activeWp = findActiveWaypoint(waypointPath, activeSol);
+  const note = activeWp?.note || '—';
+
+  function handleClose() {
+    setDrawerOpen(false);
+    setActiveSol(null);
+  }
 
   return (
     <aside style={{
@@ -30,7 +57,7 @@ export function DataDrawer() {
         </span>
         <button
           aria-label="Close drawer"
-          onClick={() => setDrawerOpen(false)}
+          onClick={handleClose}
           style={{
             background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)',
             fontSize: 20, cursor: 'pointer', lineHeight: 1, padding: 4,
@@ -48,6 +75,16 @@ export function DataDrawer() {
         <Stat label="Elevation" value={`${rover.elev_geoid.toFixed(0)} m`} />
         <Stat label="RMC" value={rover.RMC} />
       </dl>
+
+      {note !== '—' || waypointPath.length > 0 ? (
+        <p style={{
+          marginTop: 14, marginBottom: 0,
+          fontSize: 12, color: 'rgba(255,255,255,0.55)',
+          lineHeight: 1.5, borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 12,
+        }}>
+          {note}
+        </p>
+      ) : null}
     </aside>
   );
 }
