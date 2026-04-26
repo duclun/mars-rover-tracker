@@ -4,6 +4,7 @@ import { Scene } from './scene/Scene';
 import { TopBar } from './ui/TopBar';
 import { RoverPicker } from './ui/RoverPicker';
 import { DataDrawer } from './ui/DataDrawer';
+import { SolScrubber } from './ui/SolScrubber';
 import { MobileFallback } from './ui/MobileFallback';
 
 // Detected once at mount; resizing to desktop after load does not switch to the 3D view.
@@ -29,6 +30,7 @@ export function App() {
           <TopBar />
           <RoverPicker />
           <DataDrawer />
+          <SolScrubber />
         </div>
       )}
     </>
