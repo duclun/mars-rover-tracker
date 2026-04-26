@@ -9,16 +9,24 @@ export const RoverDataSchema = z.object({
   currentSol: z.number().int(),
   lat: z.number(),
   lon: z.number(),
-  elev_geoid: z.number(),    // meters above Mars geoid
+  elev_geoid: z.number(),
   dist_total_m: z.number(),
   RMC: z.string(),
-  fetchedAt: z.string(),     // ISO 8601
+  fetchedAt: z.string(),
 });
 export type RoverData = z.infer<typeof RoverDataSchema>;
 
 export const RoversJsonSchema = z.object({
   perseverance: RoverDataSchema,
   curiosity: RoverDataSchema,
-  lastUpdated: z.string(),   // ISO 8601
+  lastUpdated: z.string(),
 });
 export type RoversJson = z.infer<typeof RoversJsonSchema>;
+
+// [lat, lon] pair array -- pre-baked from JPL traverse GeoJSON
+export type TraversePath = [number, number][];
+
+export interface Traverses {
+  perseverance: TraversePath;
+  curiosity: TraversePath;
+}

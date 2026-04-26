@@ -18,7 +18,7 @@ const mockRovers: RoversJson = {
 
 beforeEach(() => {
   useAppStore.setState({
-    rovers: null, selectedRoverId: null, currentSol: 0,
+    rovers: null, traverses: null, selectedRoverId: null, currentSol: 0,
     cameraMode: 'orbit', drawerOpen: false, stale: false,
   });
 });
@@ -55,5 +55,21 @@ describe('useAppStore', () => {
     expect(useAppStore.getState().drawerOpen).toBe(true);
     useAppStore.getState().setDrawerOpen(false);
     expect(useAppStore.getState().drawerOpen).toBe(false);
+  });
+});
+
+describe('useAppStore -- traverses', () => {
+  it('starts with null traverses', () => {
+    expect(useAppStore.getState().traverses).toBeNull();
+  });
+
+  it('setTraverses stores the path data', () => {
+    const t = {
+      perseverance: [[18.43, 77.22], [18.44, 77.23]] as [number, number][],
+      curiosity: [[-4.81, 137.38]] as [number, number][],
+    };
+    useAppStore.getState().setTraverses(t);
+    expect(useAppStore.getState().traverses?.perseverance).toHaveLength(2);
+    expect(useAppStore.getState().traverses?.curiosity).toHaveLength(1);
   });
 });
