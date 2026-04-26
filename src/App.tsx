@@ -6,6 +6,7 @@ import { RoverPicker } from './ui/RoverPicker';
 import { DataDrawer } from './ui/DataDrawer';
 import { MobileFallback } from './ui/MobileFallback';
 
+// Detected once at mount; resizing to desktop after load does not switch to the 3D view.
 function useMobile() {
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
@@ -17,22 +18,19 @@ function useMobile() {
 export function App() {
   const isMobile = useMobile();
 
-  if (isMobile) {
-    return (
-      <>
-        <DataLoader />
-        <MobileFallback />
-      </>
-    );
-  }
-
   return (
-    <div style={{ width: '100vw', height: '100vh', background: '#000', position: 'relative', overflow: 'hidden' }}>
+    <>
       <DataLoader />
-      <Scene />
-      <TopBar />
-      <RoverPicker />
-      <DataDrawer />
-    </div>
+      {isMobile ? (
+        <MobileFallback />
+      ) : (
+        <div style={{ width: '100vw', height: '100vh', background: '#000', position: 'relative', overflow: 'hidden' }}>
+          <Scene />
+          <TopBar />
+          <RoverPicker />
+          <DataDrawer />
+        </div>
+      )}
+    </>
   );
 }
