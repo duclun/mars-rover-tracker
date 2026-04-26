@@ -73,3 +73,16 @@ describe('useAppStore -- traverses', () => {
     expect(useAppStore.getState().traverses?.curiosity).toHaveLength(1);
   });
 });
+
+describe('useAppStore -- cameraMode', () => {
+  it('starts in orbit mode', () => {
+    expect(useAppStore.getState().cameraMode).toBe('orbit');
+  });
+
+  it('setCameraMode updates the mode', () => {
+    useAppStore.getState().setCameraMode('diving');
+    expect(useAppStore.getState().cameraMode).toBe('diving');
+    useAppStore.getState().setCameraMode('orbit');
+    expect(useAppStore.getState().cameraMode).toBe('orbit');
+  });
+});

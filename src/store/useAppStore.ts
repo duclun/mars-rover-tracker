@@ -14,6 +14,7 @@ interface AppState {
   setTraverses: (traverses: Traverses) => void;
   selectRover: (id: RoverId) => void;
   setDrawerOpen: (open: boolean) => void;
+  setCameraMode: (mode: 'orbit' | 'diving' | 'surface') => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -28,4 +29,5 @@ export const useAppStore = create<AppState>((set) => ({
   setTraverses: (traverses) => set({ traverses }),
   selectRover: (id) => set({ selectedRoverId: id }),
   setDrawerOpen: (open) => set({ drawerOpen: open }),
+  setCameraMode: (mode) => set({ cameraMode: mode }),
 }));
