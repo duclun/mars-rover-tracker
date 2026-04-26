@@ -1,0 +1,14 @@
+{
+  "source": "MOLA MEGDR 128ppd (megt44n000hb.img)",
+  "width": 256,
+  "height": 256,
+  "minElev": -3323,
+  "maxElev": -187,
+  "bbox": {
+    "minLon": 76.21875,
+    "minLat": 17.4296875,
+    "maxLon": 78.21875,
+    "maxLat": 19.4296875
+  },
+  "bakedAt": "2026-04-26T19:09:34.750Z"
+}
