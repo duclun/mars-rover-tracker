@@ -12,6 +12,18 @@ import { useAppStore } from '../store/useAppStore';
 
 const GLOBE_RADIUS = 1;
 
+function useTraverseMaxIndex(roverId: 'perseverance' | 'curiosity'): number | undefined {
+  const waypoints = useAppStore((s) => s.waypoints);
+  const activeSol = useAppStore((s) => s.activeSol);
+  if (activeSol === null || !waypoints) return undefined;
+  const path = waypoints[roverId];
+  let idx = 0;
+  for (let i = 0; i < path.length; i++) {
+    if (path[i].sol <= activeSol) idx = i + 1;
+  }
+  return idx;
+}
+
 function SceneContents() {
   const rovers = useAppStore((s) => s.rovers);
   const traverses = useAppStore((s) => s.traverses);
@@ -19,6 +31,8 @@ function SceneContents() {
   const p = rovers?.perseverance;
   const c = rovers?.curiosity;
   const controlsRef = useRef<OrbitControlsImpl | null>(null);
+  const persMaxIndex = useTraverseMaxIndex('perseverance');
+  const curMaxIndex = useTraverseMaxIndex('curiosity');
 
   return (
     <>
@@ -32,8 +46,8 @@ function SceneContents() {
 
       {traverses && (
         <>
-          <TraverseLine path={traverses.perseverance} globeRadius={GLOBE_RADIUS} color="#00d9ff" />
-          <TraverseLine path={traverses.curiosity} globeRadius={GLOBE_RADIUS} color="#ff9c42" />
+          <TraverseLine path={traverses.perseverance} globeRadius={GLOBE_RADIUS} color="#00d9ff" maxIndex={persMaxIndex} />
+          <TraverseLine path={traverses.curiosity} globeRadius={GLOBE_RADIUS} color="#ff9c42" maxIndex={curMaxIndex} />
         </>
       )}
 

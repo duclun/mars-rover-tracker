@@ -7,13 +7,14 @@ interface TraverseLineProps {
   path: [number, number][];
   globeRadius: number;
   color?: string;
+  maxIndex?: number;
 }
 
-export function TraverseLine({ path, globeRadius, color = '#ff8c42' }: TraverseLineProps) {
-  const points = useMemo<Vector3[]>(
-    () => path.map(([lat, lon]) => latLonToVec3(lat, lon, globeRadius * 1.003)),
-    [path, globeRadius],
-  );
+export function TraverseLine({ path, globeRadius, color = '#ff8c42', maxIndex }: TraverseLineProps) {
+  const points = useMemo<Vector3[]>(() => {
+    const clipped = maxIndex !== undefined ? path.slice(0, maxIndex) : path;
+    return clipped.map(([lat, lon]) => latLonToVec3(lat, lon, globeRadius * 1.003));
+  }, [path, globeRadius, maxIndex]);
 
   if (points.length < 2) return null;
 
