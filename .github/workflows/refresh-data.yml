@@ -1,0 +1,44 @@
+name: Refresh rover data
+
+on:
+  schedule:
+    # 06:00 UTC daily — shortly after NASA MMGIS typically updates
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    # Allow manual trigger from GitHub Actions UI for testing
+
+permissions:
+  contents: write   # needed to commit and push rovers.json
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Fetch latest fixture data from NASA MMGIS
+        run: node scripts/fetch-fixtures.mjs
+
+      - name: Normalize to rovers.json
+        run: node scripts/normalize-rovers.mjs
+
+      - name: Commit updated rovers.json (if changed)
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/rovers.json
+          if git diff --staged --quiet; then
+            echo "rovers.json unchanged — nothing to commit"
+          else
+            git commit -m "chore(data): nightly rover position update [skip ci]"
+            git push
+          fi
