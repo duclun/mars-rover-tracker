@@ -1,11 +1,13 @@
-import { Suspense } from 'react';
+import { Suspense, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
+import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import { MarsGlobe } from './MarsGlobe';
 import { Atmosphere } from './Atmosphere';
 import { Rover } from './Rover';
 import { TraverseLine } from './TraverseLine';
+import { CameraRig } from './CameraRig';
 import { useAppStore } from '../store/useAppStore';
 
 const GLOBE_RADIUS = 1;
@@ -16,6 +18,7 @@ function SceneContents() {
   const selectedRoverId = useAppStore((s) => s.selectedRoverId);
   const p = rovers?.perseverance;
   const c = rovers?.curiosity;
+  const controlsRef = useRef<OrbitControlsImpl | null>(null);
 
   return (
     <>
@@ -38,11 +41,14 @@ function SceneContents() {
       {c && <Rover lat={c.lat} lon={c.lon} globeRadius={GLOBE_RADIUS} selected={selectedRoverId === 'curiosity'} />}
 
       <OrbitControls
+        ref={controlsRef}
         enablePan={false}
         minDistance={GLOBE_RADIUS * 1.3}
         maxDistance={GLOBE_RADIUS * 8}
         autoRotate={false}
       />
+
+      <CameraRig controlsRef={controlsRef} />
 
       <EffectComposer>
         <Bloom intensity={0.9} luminanceThreshold={0.2} luminanceSmoothing={0.9} />
