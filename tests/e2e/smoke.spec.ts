@@ -35,16 +35,16 @@ test.describe('M2 smoke', () => {
     await page.goto('/');
     await page.waitForTimeout(2000);
     await page.locator('button', { hasText: 'Perseverance' }).click();
-    await expect(page.locator('text=/Sol \\d+/')).toBeVisible();
+    await expect(page.locator('aside dd', { hasText: /Sol \d+/ }).first()).toBeVisible();
   });
 
   test('DataDrawer closes on X button click', async ({ page }) => {
     await page.goto('/');
     await page.waitForTimeout(2000);
     await page.locator('button', { hasText: 'Perseverance' }).click();
-    await expect(page.locator('text=/Sol \\d+/')).toBeVisible();
+    await expect(page.locator('aside dd', { hasText: /Sol \d+/ }).first()).toBeVisible();
     await page.locator('button[aria-label="Close drawer"]').click();
-    await expect(page.locator('text=/Sol \\d+/')).not.toBeVisible();
+    await expect(page.locator('aside')).not.toBeVisible();
   });
 
   test('mobile viewport shows no canvas', async ({ page }) => {
@@ -53,5 +53,34 @@ test.describe('M2 smoke', () => {
     await page.waitForTimeout(1000);
     await expect(page.locator('text=/desktop/i')).toBeVisible();
     await expect(page.locator('canvas')).not.toBeVisible();
+  });
+});
+
+test.describe('M3 smoke', () => {
+  test('SolScrubber range input is visible after selecting a rover', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForTimeout(2000);
+    await page.locator('button', { hasText: 'Perseverance' }).click();
+    await page.waitForTimeout(1000);
+    await expect(page.locator('input[type="range"]')).toBeVisible();
+  });
+
+  test('DataDrawer shows waypoint note section after selecting a rover', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForTimeout(2000);
+    await page.locator('button', { hasText: 'Curiosity' }).click();
+    await page.waitForTimeout(1000);
+    // Note section appears whenever waypoints loaded (shows note text or em-dash)
+    await expect(page.locator('aside p')).toBeVisible();
+  });
+
+  test('closing drawer hides SolScrubber', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForTimeout(2000);
+    await page.locator('button', { hasText: 'Perseverance' }).click();
+    await page.waitForTimeout(1000);
+    await expect(page.locator('input[type="range"]')).toBeVisible();
+    await page.locator('button[aria-label="Close drawer"]').click();
+    await expect(page.locator('input[type="range"]')).not.toBeVisible();
   });
 });

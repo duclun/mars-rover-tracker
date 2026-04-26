@@ -1,0 +1,159 @@
+Mars Rover Tracker — Project Progress
+======================================
+Last updated: 2026-04-26
+
+REPO
+----
+GitHub: git@github.com:duclun/mars-rover-tracker.git
+Live:   https://duclun.github.io/mars-rover-tracker/
+Stack:  React 18 + Vite + TypeScript, React Three Fiber, Zustand, Vitest + RTL, Playwright
+Deploy: GitHub Actions → GitHub Pages (pushes to main auto-deploy)
+
+COMPLETED
+---------
+
+M0 — Spike
+  - Globe rendering proof-of-concept
+  - NASA MMGIS traverse fixture files committed:
+      data/fixtures/M20_traverse.json   (~8 MB, Perseverance GeoJSON)
+      data/fixtures/MSL_traverse.json   (~8 MB, Curiosity GeoJSON)
+  - Screenshot script: scripts/screenshot-spike.mjs
+
+M1 — Globe + Deploy (38 unit tests)
+  - React 18 + Vite + TypeScript project scaffold
+  - R3F Canvas with MarsGlobe (2K JPEG texture), Atmosphere shell, Bloom postprocessing
+  - Rover pip markers (Rover.tsx) at real lat/lon using latLonToVec3 (src/data/coords.ts)
+  - Zustand store (src/store/useAppStore.ts): rovers, selectedRoverId, drawerOpen, stale, cameraMode
+  - DataLoader (src/data/DataLoader.tsx): fetches /data/rovers.json, falls back to bundled snapshot
+  - Public snapshot: public/data/rovers.json (updated nightly by GitHub Action)
+  - TopBar (src/ui/TopBar.tsx): title, NASA attribution, stale badge, last-updated date
+  - Zod schemas for runtime validation of NASA data (src/data/types.ts)
+  - GitHub Pages deploy via GitHub Actions (.github/workflows/build.yml)
+  - SSH auth set up on this machine (key: ~/.ssh/id_ed25519, comment "zephyrus")
+  - Globe blinking fix: removed alpha:true from Canvas gl props (conflicts with EffectComposer)
+
+M2 — Rover Picker + Traverses + Drawer + Mobile (63 unit tests, 6 E2E tests)
+  - scripts/bake-traverses.mjs: extracts [lat,lon][] from fixture GeoJSON, commits output
+  - public/data/traverses/perseverance.json (518 points)
+  - public/data/traverses/curiosity.json   (1270 points)
+  - TraversePath / Traverses types added to src/data/types.ts
+  - traverses field + setTraverses action added to Zustand store
+  - DataLoader fetches both traverse files in parallel at boot (silent fail = no lines)
+  - RoverPicker (src/ui/RoverPicker.tsx): bottom-center chips, click → selectRover + setDrawerOpen(true)
+  - TraverseLine (src/scene/TraverseLine.tsx): drei <Line> on globe surface at radius*1.003
+  - Rover.tsx updated: selected prop → larger pip (0.022) + white colour
+  - Scene.tsx wired: TraverseLines (cyan/orange) + selected Rover state
+  - DataDrawer (src/ui/DataDrawer.tsx): glass panel (right side), shows Sol, distance km, lat/lon (4dp), elevation, RMC
+  - MobileFallback (src/ui/MobileFallback.tsx): shown on ≤768px/pointer:coarse, Mars orb + chips + attribution
+  - App.tsx: useMobile hook (set-once on mount), DataLoader above conditional, desktop vs mobile branches
+  - Playwright smoke suite: 2 M1 tests + 4 M2 tests, all green
+  - Screenshot: docs/m0-screenshots/m2-globe.png
+
+M3 — Camera Animation + KTX2 Textures + Live Data + Sol Scrubber (88 unit tests, 9 E2E tests)
+  M3a — KTX2 Textures
+  - scripts/bake-globe-textures.mjs: downloads basisu.exe, converts JPEG→KTX2, copies basis transcoder
+  - public/data/textures/mars-albedo.ktx2 committed
+  - public/basis/basis_transcoder.js + .wasm committed
+  - MarsGlobe.tsx: loads KTX2 via KTX2Loader with setTranscoderPath('/basis/')
+
+  M3b — Camera Animation
+  - setCameraMode action added to Zustand store
+  - CameraRig.tsx: GSAP fly-to animation on rover select, disables/re-enables OrbitControls
+  - Scene.tsx wired with controlsRef + <CameraRig />
+
+  M3c — Live Data Refresh
+  - .github/workflows/refresh-data.yml: nightly cron 06:00 UTC, fetches NASA MMGIS,
+    zod-validates, commits updated JSON with [skip ci]
+
+  M3d — Sol Scrubber + Waypoint Details
+  - scripts/bake-waypoints.mjs: extracts per-sol waypoints with sol/lat/lon/note
+  - public/data/waypoints/perseverance.json + curiosity.json committed
+  - Waypoint / WaypointPath / Waypoints types + waypoints/activeSol store fields
+  - DataLoader fetches waypoint files in parallel
+  - TraverseLine gains maxIndex prop; Scene derives clip index from activeSol
+  - SolScrubber (src/ui/SolScrubber.tsx): range slider, absolute-positioned bottom-center,
+    visible when drawer open + rover selected
+  - DataDrawer shows waypoint note for active sol
+  - App.tsx: <SolScrubber /> wired into desktop layout
+
+CURRENT STATE
+-------------
+- 88 unit tests passing (npx vitest run)
+- 9 Playwright E2E tests passing (npx playwright test)
+- TypeScript strict mode clean (npx tsc --noEmit exits 0)
+- main branch pushed, GitHub Pages live at https://duclun.github.io/mars-rover-tracker/
+
+WHAT'S LEFT (M4 — not started)
+--------------------------------
+Priority order:
+
+1. SurfacePatch (HIGH — the cinematic surface view)
+   - HiRISE DEM bake pipeline (scripts/bake-dem.mjs already exists from M0)
+   - <SurfacePatch roverId> component: displaces a PlaneGeometry from the .bin heightfield
+   - Fade globe out / SurfacePatch in at ~t=3.0 of the GSAP dive
+   - Coordinate alignment: rover lat/lon → UV position on the DEM mesh
+   - DEMLoader with IndexedDB cache
+
+2. WaypointMarker (LOW)
+   - Clickable pips on the traverse line
+   - Click → set activeSol in store
+
+3. CreditsFooter (LOW — TopBar already has NASA link, this is a nicer footer)
+
+KEY FILES FOR A NEW AGENT
+--------------------------
+src/
+  App.tsx                    — root, mobile detection, component wiring
+  data/
+    types.ts                 — Zod schemas + TypeScript types
+    coords.ts                — latLonToVec3 utility
+    DataLoader.tsx           — fetches rovers.json + traverses + waypoints
+  store/
+    useAppStore.ts           — Zustand store (all global state)
+  scene/
+    Scene.tsx                — R3F Canvas, SceneContents, CameraRig
+    MarsGlobe.tsx            — KTX2 textured sphere
+    CameraRig.tsx            — GSAP fly-to camera animation
+    Atmosphere.tsx           — translucent shell
+    Rover.tsx                — pip marker at lat/lon
+    TraverseLine.tsx         — drei <Line> path (maxIndex prop for sol clipping)
+  ui/
+    TopBar.tsx               — header bar (last-updated badge)
+    RoverPicker.tsx          — bottom chip buttons
+    DataDrawer.tsx           — right stats panel + waypoint note
+    SolScrubber.tsx          — bottom range slider (sol scrubbing)
+    MobileFallback.tsx       — mobile replacement for 3D scene
+scripts/
+  bake-traverses.mjs         — regenerate public/data/traverses/*.json from fixtures
+  bake-waypoints.mjs         — regenerate public/data/waypoints/*.json from fixtures
+  bake-globe-textures.mjs    — convert JPEG→KTX2, copy basis transcoder
+  bake-dem.mjs               — bake HiRISE DEM → .bin heightfield (used in M0 spike)
+public/
+  data/
+    rovers.json              — latest rover positions (refreshed nightly)
+    traverses/
+      perseverance.json      — baked path [[lat,lon],...]
+      curiosity.json         — baked path [[lat,lon],...]
+    waypoints/
+      perseverance.json      — per-sol waypoints [{sol,lat,lon,note},...]
+      curiosity.json
+    textures/
+      mars-albedo.ktx2       — KTX2 globe texture
+  basis/
+    basis_transcoder.js      — KTX2 transcoder runtime
+    basis_transcoder.wasm
+  assets/
+    mars-2k.jpg              — globe texture fallback
+tests/
+  e2e/
+    smoke.spec.ts            — Playwright tests (M1 + M2 + M3)
+
+COMMANDS
+--------
+npm run dev        — start dev server at http://localhost:5174
+npm test           — run all unit tests (Vitest)
+npx playwright test — run E2E tests (headless:false, needs display)
+npx tsc --noEmit   — type check
+node scripts/bake-traverses.mjs   — regenerate traverse JSON files
+node scripts/bake-waypoints.mjs   — regenerate waypoint JSON files
+git push           — deploy to GitHub Pages via Actions
