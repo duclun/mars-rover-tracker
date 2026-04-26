@@ -100,9 +100,8 @@ if (!await fileExists(basisuExe)) {
   await writeFile(zipPath, new Uint8Array(await zipRes.arrayBuffer()));
   execSync(`powershell -Command "Expand-Archive -Path '${zipPath}' -DestinationPath '${CACHE_DIR}' -Force"`, { stdio: 'pipe' });
   const findResult = execSync(`powershell -Command "Get-ChildItem -Path '${CACHE_DIR}' -Filter 'basisu.exe' -Recurse | Select-Object -First 1 -ExpandProperty FullName"`, { encoding: 'utf8' }).trim();
-  if (findResult && findResult !== basisuExe) {
-    await copyFile(findResult, basisuExe);
-  }
+  if (!findResult) throw new Error('basisu.exe not found inside downloaded zip');
+  if (findResult !== basisuExe) await copyFile(findResult, basisuExe);
   console.log('OK');
 }
 
