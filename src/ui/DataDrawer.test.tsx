@@ -22,6 +22,7 @@ beforeEach(() => {
   useAppStore.setState({
     rovers: mockRovers, traverses: null, selectedRoverId: null,
     currentSol: 0, cameraMode: 'orbit', drawerOpen: false, stale: false,
+    waypoints: null, activeSol: null,
   });
 });
 

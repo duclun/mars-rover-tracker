@@ -20,6 +20,7 @@ beforeEach(() => {
   useAppStore.setState({
     rovers: null, traverses: null, selectedRoverId: null, currentSol: 0,
     cameraMode: 'orbit', drawerOpen: false, stale: false,
+    waypoints: null, activeSol: null,
   });
 });
 
@@ -84,5 +85,34 @@ describe('useAppStore -- cameraMode', () => {
     expect(useAppStore.getState().cameraMode).toBe('diving');
     useAppStore.getState().setCameraMode('orbit');
     expect(useAppStore.getState().cameraMode).toBe('orbit');
+  });
+});
+
+describe('useAppStore -- waypoints', () => {
+  it('starts with null waypoints', () => {
+    expect(useAppStore.getState().waypoints).toBeNull();
+  });
+
+  it('setWaypoints stores waypoint data', () => {
+    const w = {
+      perseverance: [{ lat: 18.43, lon: 77.22, sol: 100, distKm: 0.5, note: 'Stop 1' }],
+      curiosity: [{ lat: -4.81, lon: 137.38, sol: 50, distKm: 0.2, note: '' }],
+    };
+    useAppStore.getState().setWaypoints(w);
+    expect(useAppStore.getState().waypoints?.perseverance).toHaveLength(1);
+    expect(useAppStore.getState().waypoints?.perseverance[0].sol).toBe(100);
+  });
+});
+
+describe('useAppStore -- activeSol', () => {
+  it('starts with null activeSol', () => {
+    expect(useAppStore.getState().activeSol).toBeNull();
+  });
+
+  it('setActiveSol updates activeSol', () => {
+    useAppStore.getState().setActiveSol(500);
+    expect(useAppStore.getState().activeSol).toBe(500);
+    useAppStore.getState().setActiveSol(null);
+    expect(useAppStore.getState().activeSol).toBeNull();
   });
 });

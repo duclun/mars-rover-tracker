@@ -30,3 +30,19 @@ export interface Traverses {
   perseverance: TraversePath;
   curiosity: TraversePath;
 }
+
+// Single waypoint from bake-waypoints.mjs output
+export interface Waypoint {
+  lat: number;
+  lon: number;
+  sol: number;
+  distKm: number;
+  note: string;
+}
+
+export type WaypointPath = Waypoint[];
+
+export interface Waypoints {
+  perseverance: WaypointPath;
+  curiosity: WaypointPath;
+}

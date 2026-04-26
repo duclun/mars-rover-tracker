@@ -7,7 +7,7 @@ afterEach(() => {
   useAppStore.setState({
     rovers: null, stale: false, selectedRoverId: null,
     currentSol: 0, cameraMode: 'orbit', drawerOpen: false,
-    traverses: null,
+    traverses: null, waypoints: null, activeSol: null,
   });
   vi.restoreAllMocks();
 });
