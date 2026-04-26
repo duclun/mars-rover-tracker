@@ -39,7 +39,7 @@ export function WaypointMarkers({ roverId, globeRadius }: Props) {
               setDrawerOpen(true);
             }}
           >
-            <sphereGeometry args={[globeRadius * 0.0028, 6, 6]} />
+            <sphereGeometry args={[globeRadius * 0.007, 6, 6]} />
             <meshStandardMaterial color={isActive ? '#ffffff' : '#ffcc44'} />
           </mesh>
         );
