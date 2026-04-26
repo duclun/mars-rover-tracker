@@ -8,6 +8,7 @@ import { Atmosphere } from './Atmosphere';
 import { Rover } from './Rover';
 import { TraverseLine } from './TraverseLine';
 import { CameraRig } from './CameraRig';
+import { SurfacePatch } from './SurfacePatch';
 import { useAppStore } from '../store/useAppStore';
 
 const GLOBE_RADIUS = 1;
@@ -64,6 +65,11 @@ function SceneContents() {
 
       <CameraRig controlsRef={controlsRef} />
 
+      <Suspense fallback={null}>
+        <SurfacePatch roverId="perseverance" />
+        <SurfacePatch roverId="curiosity" />
+      </Suspense>
+
       <EffectComposer>
         <Bloom intensity={0.9} luminanceThreshold={0.2} luminanceSmoothing={0.9} />
       </EffectComposer>
@@ -74,7 +80,7 @@ function SceneContents() {
 export function Scene() {
   return (
     <Canvas
-      camera={{ position: [0, 0, 3], fov: 45 }}
+      camera={{ position: [0, 0, 3], fov: 45, near: 0.00001, far: 100 }}
       gl={{ antialias: true }}
       style={{ width: '100%', height: '100%' }}
     >
