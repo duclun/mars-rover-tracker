@@ -83,22 +83,22 @@ CURRENT STATE
 - TypeScript strict mode clean (npx tsc --noEmit exits 0)
 - main branch pushed, GitHub Pages live at https://duclun.github.io/mars-rover-tracker/
 
-WHAT'S LEFT (M4 — not started)
---------------------------------
-Priority order:
+M4 — SurfacePatch + Cinematic Dive (88 unit tests, 9 E2E tests — in progress)
+  - scripts/fetch-mola-dem.mjs: downloads 256x256 MOLA MEGDR 128ppd crops via HTTP Range
+    requests (~5.6 MB per rover vs 129 MB full tile)
+  - public/data/dem/perseverance.bin/.json (Jezero Crater, -3323 to -187 m)
+  - public/data/dem/curiosity.bin/.json (Gale Crater, 706 to 2731 m)
+  - SurfacePatch.tsx: PlaneGeometry displaced by heightfield in tangent frame (5x vert exag),
+    only renders when cameraMode === 'surface' + rover selected
+  - CameraRig.tsx: two-phase GSAP timeline -- rotate to rover (1.2s) then descend to
+    surface altitude GLOBE_RADIUS+0.001 (2.5s), sets cameraMode='surface' on land
+  - Scene.tsx: SurfacePatch wired for both rovers, camera near/far widened
 
-1. SurfacePatch (HIGH — the cinematic surface view)
-   - HiRISE DEM bake pipeline (scripts/bake-dem.mjs already exists from M0)
-   - <SurfacePatch roverId> component: displaces a PlaneGeometry from the .bin heightfield
-   - Fade globe out / SurfacePatch in at ~t=3.0 of the GSAP dive
-   - Coordinate alignment: rover lat/lon → UV position on the DEM mesh
-   - DEMLoader with IndexedDB cache
-
-2. WaypointMarker (LOW)
-   - Clickable pips on the traverse line
-   - Click → set activeSol in store
-
-3. CreditsFooter (LOW — TopBar already has NASA link, this is a nicer footer)
+WHAT'S LEFT (polish)
+--------------------
+1. Globe fade-out during dive (MarsGlobe opacity to 0 as camera descends)
+2. WaypointMarker -- clickable pips on traverse line, click sets activeSol
+3. CreditsFooter -- TopBar already has NASA link; a footer is low priority
 
 KEY FILES FOR A NEW AGENT
 --------------------------
