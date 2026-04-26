@@ -11,12 +11,15 @@ export function MobileFallback() {
       position: 'relative', overflow: 'hidden',
       fontFamily: 'system-ui, sans-serif', color: '#fff',
     }}>
-      <div style={{
-        width: 200, height: 200, borderRadius: '50%',
-        background: 'radial-gradient(circle at 35% 35%, #c1440e, #6b1a00)',
-        marginBottom: 32, opacity: 0.85,
-        boxShadow: '0 0 60px rgba(193,68,14,0.4)',
-      }} />
+      <div
+        aria-hidden="true"
+        style={{
+          width: 200, height: 200, borderRadius: '50%',
+          background: 'radial-gradient(circle at 35% 35%, #c1440e, #6b1a00)',
+          marginBottom: 32, opacity: 0.85,
+          boxShadow: '0 0 60px rgba(193,68,14,0.4)',
+        }}
+      />
 
       <h1 style={{ fontSize: 22, fontWeight: 700, margin: '0 0 8px', letterSpacing: '0.04em' }}>
         Mars Rover Tracker
@@ -25,7 +28,9 @@ export function MobileFallback() {
         Open on a desktop browser for the 3D experience.
       </p>
 
-      <RoverPicker />
+      <div style={{ position: 'relative', height: 56, width: '100%' }}>
+        <RoverPicker />
+      </div>
       <DataDrawer />
 
       <a
