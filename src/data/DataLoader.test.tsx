@@ -81,3 +81,42 @@ describe('DataLoader -- traverses', () => {
     expect(useAppStore.getState().traverses).toBeNull();
   });
 });
+
+describe('DataLoader -- waypoints', () => {
+  it('sets waypoints when both waypoint files load successfully', async () => {
+    const mockWaypointsP = [{ lat: 18.43, lon: 77.22, sol: 100, distKm: 0.5, note: 'Stop' }];
+    const mockWaypointsC = [{ lat: -4.81, lon: 137.38, sol: 50, distKm: 0.2, note: '' }];
+
+    vi.stubGlobal('fetch', vi.fn((url: string) => {
+      if (url === '/data/rovers.json') return Promise.resolve({ ok: false, status: 500 });
+      if (url === '/data/traverses/perseverance.json') return Promise.resolve({ ok: true, json: () => Promise.resolve([]) });
+      if (url === '/data/traverses/curiosity.json') return Promise.resolve({ ok: true, json: () => Promise.resolve([]) });
+      if (url === '/data/waypoints/perseverance.json') return Promise.resolve({ ok: true, json: () => Promise.resolve(mockWaypointsP) });
+      if (url === '/data/waypoints/curiosity.json') return Promise.resolve({ ok: true, json: () => Promise.resolve(mockWaypointsC) });
+      return Promise.resolve({ ok: false, status: 404 });
+    }));
+
+    render(<DataLoader />);
+
+    await vi.waitFor(() => {
+      const { waypoints } = useAppStore.getState();
+      expect(waypoints?.perseverance).toHaveLength(1);
+      expect(waypoints?.curiosity).toHaveLength(1);
+    });
+  });
+
+  it('leaves waypoints null when waypoint fetch fails', async () => {
+    vi.stubGlobal('fetch', vi.fn((url: string) => {
+      if (url === '/data/rovers.json') return Promise.resolve({ ok: false, status: 500 });
+      if (url.includes('/data/traverses/')) return Promise.resolve({ ok: true, json: () => Promise.resolve([]) });
+      return Promise.reject(new Error('network error'));
+    }));
+
+    render(<DataLoader />);
+
+    await vi.waitFor(() => {
+      expect(useAppStore.getState().stale).toBe(true);
+    });
+    expect(useAppStore.getState().waypoints).toBeNull();
+  });
+});
