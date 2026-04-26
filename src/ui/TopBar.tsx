@@ -32,6 +32,15 @@ export function TopBar() {
         >
           NASA/JPL-Caltech
         </a>
+        {' · '}
+        <a
+          href="https://www.usgs.gov/centers/astrogeology-science-center"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: 'rgba(255,255,255,0.55)', textDecoration: 'underline' }}
+        >
+          USGS
+        </a>
       </span>
     </header>
   );

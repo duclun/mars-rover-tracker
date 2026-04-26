@@ -76,12 +76,10 @@ M3 — Camera Animation + KTX2 Textures + Live Data + Sol Scrubber (88 unit test
   - DataDrawer shows waypoint note for active sol
   - App.tsx: <SolScrubber /> wired into desktop layout
 
-CURRENT STATE
--------------
-- 88 unit tests passing (npx vitest run)
-- 9 Playwright E2E tests passing (npx playwright test)
-- TypeScript strict mode clean (npx tsc --noEmit exits 0)
-- main branch pushed, GitHub Pages live at https://duclun.github.io/mars-rover-tracker/
+CURRENT STATE (pre-polish)
+--------------------------
+- 88 unit tests passing, 9 E2E tests passing
+- main branch pushed, GitHub Pages live
 
 M4 — SurfacePatch + Cinematic Dive (88 unit tests, 9 E2E tests — in progress)
   - scripts/fetch-mola-dem.mjs: downloads 256x256 MOLA MEGDR 128ppd crops via HTTP Range
@@ -94,11 +92,17 @@ M4 — SurfacePatch + Cinematic Dive (88 unit tests, 9 E2E tests — in progress
     surface altitude GLOBE_RADIUS+0.001 (2.5s), sets cameraMode='surface' on land
   - Scene.tsx: SurfacePatch wired for both rovers, camera near/far widened
 
-WHAT'S LEFT (polish)
---------------------
-1. Globe fade-out during dive (MarsGlobe opacity to 0 as camera descends)
-2. WaypointMarker -- clickable pips on traverse line, click sets activeSol
-3. CreditsFooter -- TopBar already has NASA link; a footer is low priority
+Polish (complete)
+-----------------
+- MarsGlobe: transparent material, opacity lerps to 0 on cameraMode=surface (2x/s)
+- WaypointMarkers.tsx: up to 150 thinned pips on globe, click sets activeSol + opens drawer,
+  hidden in surface mode
+- TopBar: added USGS Astrogeology attribution alongside NASA/JPL-Caltech
+
+CURRENT STATE
+--------------
+Feature-complete. All milestones shipped. 88 unit tests + 9 E2E tests passing.
+Live: https://duclun.github.io/mars-rover-tracker/
 
 KEY FILES FOR A NEW AGENT
 --------------------------

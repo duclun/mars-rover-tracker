@@ -9,6 +9,7 @@ import { Rover } from './Rover';
 import { TraverseLine } from './TraverseLine';
 import { CameraRig } from './CameraRig';
 import { SurfacePatch } from './SurfacePatch';
+import { WaypointMarkers } from './WaypointMarkers';
 import { useAppStore } from '../store/useAppStore';
 
 const GLOBE_RADIUS = 1;
@@ -54,6 +55,9 @@ function SceneContents() {
 
       {p && <Rover lat={p.lat} lon={p.lon} globeRadius={GLOBE_RADIUS} selected={selectedRoverId === 'perseverance'} />}
       {c && <Rover lat={c.lat} lon={c.lon} globeRadius={GLOBE_RADIUS} selected={selectedRoverId === 'curiosity'} />}
+
+      <WaypointMarkers roverId="perseverance" globeRadius={GLOBE_RADIUS} />
+      <WaypointMarkers roverId="curiosity" globeRadius={GLOBE_RADIUS} />
 
       <OrbitControls
         ref={controlsRef}
