@@ -7,6 +7,7 @@ afterEach(() => {
   useAppStore.setState({
     rovers: null, stale: false, selectedRoverId: null,
     currentSol: 0, cameraMode: 'orbit', drawerOpen: false,
+    traverses: null,
   });
   vi.restoreAllMocks();
 });
@@ -35,5 +36,48 @@ describe('DataLoader', () => {
       const { stale } = useAppStore.getState();
       expect(stale).toBe(true);
     });
+  });
+});
+
+describe('DataLoader -- traverses', () => {
+  it('sets traverses when both traverse files load successfully', async () => {
+    const mockTraverseP: [number, number][] = [[18.43, 77.22]];
+    const mockTraverseC: [number, number][] = [[-4.81, 137.38]];
+
+    vi.stubGlobal('fetch', vi.fn((url: string) => {
+      if (url === '/data/rovers.json') {
+        return Promise.resolve({ ok: false, status: 500 }); // use snapshot
+      }
+      if (url === '/data/traverses/perseverance.json') {
+        return Promise.resolve({ ok: true, json: () => Promise.resolve(mockTraverseP) });
+      }
+      if (url === '/data/traverses/curiosity.json') {
+        return Promise.resolve({ ok: true, json: () => Promise.resolve(mockTraverseC) });
+      }
+      return Promise.resolve({ ok: false, status: 404 });
+    }));
+
+    render(<DataLoader />);
+
+    await vi.waitFor(() => {
+      const { traverses } = useAppStore.getState();
+      expect(traverses?.perseverance).toHaveLength(1);
+      expect(traverses?.curiosity).toHaveLength(1);
+    });
+  });
+
+  it('leaves traverses null when traverse fetch fails', async () => {
+    vi.stubGlobal('fetch', vi.fn((url: string) => {
+      if (url === '/data/rovers.json') return Promise.resolve({ ok: false, status: 500 });
+      return Promise.reject(new Error('network error'));
+    }));
+
+    render(<DataLoader />);
+
+    await vi.waitFor(() => {
+      // rovers fallback must have loaded (stale)
+      expect(useAppStore.getState().stale).toBe(true);
+    });
+    expect(useAppStore.getState().traverses).toBeNull();
   });
 });
