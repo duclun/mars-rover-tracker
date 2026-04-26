@@ -65,4 +65,11 @@ describe('DataDrawer', () => {
     fireEvent.click(screen.getByRole('button', { name: /close/i }));
     expect(useAppStore.getState().drawerOpen).toBe(false);
   });
+
+  it('shows lat/lon to 4 decimal places', () => {
+    useAppStore.setState({ selectedRoverId: 'perseverance', drawerOpen: true });
+    render(<DataDrawer />);
+    expect(screen.getByText('18.4300°')).toBeInTheDocument();
+    expect(screen.getByText('77.2200°')).toBeInTheDocument();
+  });
 });

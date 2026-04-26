@@ -8,7 +8,8 @@ export function DataDrawer() {
 
   if (!drawerOpen || !selectedRoverId || !rovers) return null;
 
-  const rover = rovers[selectedRoverId];
+  const rover = rovers[selectedRoverId as 'perseverance' | 'curiosity'];
+  if (!rover) return null;
   const distKm = (rover.dist_total_m / 1000).toFixed(1);
 
   return (
