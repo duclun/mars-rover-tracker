@@ -49,7 +49,7 @@ export function Scene() {
   return (
     <Canvas
       camera={{ position: [0, 0, 3], fov: 45 }}
-      gl={{ antialias: true, alpha: true }}
+      gl={{ antialias: true }}
       style={{ width: '100%', height: '100%' }}
     >
       <SceneContents />
