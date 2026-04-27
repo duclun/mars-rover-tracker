@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useThree } from '@react-three/fiber';
+import { useThree, useFrame } from '@react-three/fiber';
 import { Vector3 } from 'three';
 import { gsap } from 'gsap';
 import { useAppStore } from '../store/useAppStore';
@@ -18,7 +18,20 @@ export function CameraRig({ controlsRef }: CameraRigProps) {
   const selectedRoverId = useAppStore((s) => s.selectedRoverId);
   const rovers = useAppStore((s) => s.rovers);
   const setCameraMode = useAppStore((s) => s.setCameraMode);
+  const cameraMode = useAppStore((s) => s.cameraMode);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
+  const surfacePos = useRef<Vector3 | null>(null);
+  const surfaceLookAt = useRef<Vector3 | null>(null);
+
+  // Lock position + orientation every frame in surface mode.
+  // OrbitControls.update() (even when disabled) can reset both; running at
+  // priority -1 ensures we override it after all default-priority (0) hooks.
+  useFrame(() => {
+    if (cameraMode === 'surface' && surfacePos.current && surfaceLookAt.current) {
+      camera.position.copy(surfacePos.current);
+      camera.lookAt(surfaceLookAt.current);
+    }
+  }, -1);
 
   useEffect(() => {
     if (!selectedRoverId || !rovers || !controlsRef.current) return;
@@ -34,17 +47,17 @@ export function CameraRig({ controlsRef }: CameraRigProps) {
     const normal = latLonToVec3(rover.lat, rover.lon, 1).normalize();
     const worldUp = new Vector3(0, 1, 0);
     const east = new Vector3().crossVectors(normal, worldUp).normalize();
-    const north = new Vector3().crossVectors(east, normal).normalize();
 
     // Phase 1 target: rover position at current orbit altitude
     const orbitDist = camera.position.length();
     const orbitTarget = latLonToVec3(rover.lat, rover.lon, orbitDist);
 
-    // Phase 2 target: 2 km north + 0.3 km above rover surface (looking south)
+    // Phase 2 target: 3 km east + 1 km above rover (east is truly horizontal in world space;
+    // north/south at mid-latitudes points nearly vertical, giving a top-down view)
     const surfaceTarget = normal.clone()
       .multiplyScalar(GLOBE_RADIUS)
-      .addScaledVector(north, 2 * KM)
-      .addScaledVector(normal, 0.3 * KM);
+      .addScaledVector(east, 3 * KM)
+      .addScaledVector(normal, 1 * KM);
 
     // Camera looks at the rover's surface position during Phase 2
     const roverSurface = latLonToVec3(rover.lat, rover.lon, GLOBE_RADIUS);
@@ -52,9 +65,11 @@ export function CameraRig({ controlsRef }: CameraRigProps) {
 
     const tl = gsap.timeline({
       onComplete: () => {
+        surfacePos.current = surfaceTarget.clone();
+        surfaceLookAt.current = roverSurface.clone();
+        camera.position.copy(surfaceTarget);
+        camera.lookAt(roverSurface);
         setCameraMode('surface');
-        // OrbitControls stays disabled — minDistance would push camera back to orbit.
-        // A new rover selection resets the rig from wherever the camera is.
       },
     });
 
@@ -63,21 +78,17 @@ export function CameraRig({ controlsRef }: CameraRigProps) {
       x: orbitTarget.x, y: orbitTarget.y, z: orbitTarget.z,
       duration: 1.2,
       ease: 'power2.inOut',
-      onUpdate: () => {
-        camera.lookAt(0, 0, 0);
-        controlsRef.current?.update();
-      },
+      onUpdate: () => { camera.lookAt(0, 0, 0); },
     });
 
     // Phase 2a: descend to surface position (2.5 s)
+    // Note: do NOT call controls.update() here — OrbitControls.update() calls
+    // camera.lookAt(target=0,0,0) unconditionally, overriding Phase 2b's lookAt tween.
     tl.to(camera.position, {
       x: surfaceTarget.x, y: surfaceTarget.y, z: surfaceTarget.z,
       duration: 2.5,
       ease: 'power3.in',
-      onUpdate: () => {
-        camera.lookAt(lookProxy.x, lookProxy.y, lookProxy.z);
-        controlsRef.current?.update();
-      },
+      onUpdate: () => { camera.lookAt(lookProxy.x, lookProxy.y, lookProxy.z); },
     });
 
     // Phase 2b: shift lookAt from planet center toward rover (concurrent)

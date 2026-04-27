@@ -5,7 +5,7 @@ import { latLonToVec3, MARS_MEAN_RADIUS_KM } from '../data/coords';
 
 const MARS_RADIUS_M = MARS_MEAN_RADIUS_KM * 1000;
 const GLOBE_RADIUS = 1;
-const VERT_EXAG = 5;
+const VERT_EXAG = 20;
 const SEGMENTS = 255; // 256×256 vertices, matches MOLA 256×256 crop
 
 interface DemMeta {

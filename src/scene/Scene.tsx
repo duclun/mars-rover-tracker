@@ -30,6 +30,7 @@ function SceneContents() {
   const rovers = useAppStore((s) => s.rovers);
   const traverses = useAppStore((s) => s.traverses);
   const selectedRoverId = useAppStore((s) => s.selectedRoverId);
+  const cameraMode = useAppStore((s) => s.cameraMode);
   const p = rovers?.perseverance;
   const c = rovers?.curiosity;
   const controlsRef = useRef<OrbitControlsImpl | null>(null);
@@ -61,6 +62,7 @@ function SceneContents() {
 
       <OrbitControls
         ref={controlsRef}
+        enabled={cameraMode === 'orbit'}
         enablePan={false}
         minDistance={GLOBE_RADIUS * 1.3}
         maxDistance={GLOBE_RADIUS * 8}

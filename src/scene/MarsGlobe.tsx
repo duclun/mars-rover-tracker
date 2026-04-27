@@ -27,11 +27,14 @@ export function MarsGlobe({ radius = 1 }: MarsGlobeProps) {
   albedo.colorSpace = SRGBColorSpace;
 
   useFrame((_, dt) => {
-    if (ref.current) ref.current.rotation.y += dt * 0.025;
-    if (matRef.current) {
-      const target = cameraMode === 'surface' ? 0 : 1;
-      matRef.current.opacity += (target - matRef.current.opacity) * Math.min(1, dt * 2);
-    }
+    if (!ref.current || !matRef.current) return;
+    ref.current.rotation.y += dt * 0.025;
+    // Start fading as soon as dive begins (not only on surface arrival) so the
+    // camera never ends up inside the displaced globe mesh.
+    const target = cameraMode === 'orbit' ? 1 : 0;
+    const speed = cameraMode === 'orbit' ? 2 : 4;
+    matRef.current.opacity += (target - matRef.current.opacity) * Math.min(1, dt * speed);
+    ref.current.visible = matRef.current.opacity > 0.01;
   });
 
   return (
