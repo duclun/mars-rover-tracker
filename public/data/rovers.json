@@ -6,9 +6,9 @@
     "lat": 18.42616728,
     "lon": 77.21806001,
     "elev_geoid": -1958.001953,
-    "dist_total_m": 43655.034,
+    "dist_total_m": 43655.05,
     "RMC": "89_4178",
-    "fetchedAt": "2026-07-22T08:30:45.513Z"
+    "fetchedAt": "2026-07-23T08:31:50.494Z"
   },
   "curiosity": {
     "id": "curiosity",
@@ -19,7 +19,7 @@
     "elev_geoid": -3531.088,
     "dist_total_m": 37874.92,
     "RMC": "123_2328",
-    "fetchedAt": "2026-07-22T08:30:45.513Z"
+    "fetchedAt": "2026-07-23T08:31:50.494Z"
   },
-  "lastUpdated": "2026-07-22T08:30:45.513Z"
+  "lastUpdated": "2026-07-23T08:31:50.494Z"
 }
