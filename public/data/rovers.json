@@ -2,24 +2,24 @@
   "perseverance": {
     "id": "perseverance",
     "name": "Perseverance",
-    "currentSol": 1965,
-    "lat": 18.4371465,
-    "lon": 77.23186719,
-    "elev_geoid": -1927.68689,
-    "dist_total_m": 45105.717,
-    "RMC": "91_806",
-    "fetchedAt": "2026-09-14T12:00:54.009Z"
+    "currentSol": 1979,
+    "lat": 18.43714805,
+    "lon": 77.23189271,
+    "elev_geoid": -1927.661255,
+    "dist_total_m": 45107.347,
+    "RMC": "91_852",
+    "fetchedAt": "2026-09-15T11:15:46.759Z"
   },
   "curiosity": {
     "id": "curiosity",
     "name": "Curiosity",
-    "currentSol": 5011,
-    "lat": -4.82460269,
-    "lon": 137.3875926,
-    "elev_geoid": -3488.925,
-    "dist_total_m": 38278.56,
-    "RMC": "124_2866",
-    "fetchedAt": "2026-09-14T12:00:54.009Z"
+    "currentSol": 5014,
+    "lat": -4.8246287,
+    "lon": 137.3881211,
+    "elev_geoid": -3486.334,
+    "dist_total_m": 38314.57,
+    "RMC": "125_0",
+    "fetchedAt": "2026-09-15T11:15:46.759Z"
   },
-  "lastUpdated": "2026-09-14T12:00:54.009Z"
+  "lastUpdated": "2026-09-15T11:15:46.759Z"
 }
