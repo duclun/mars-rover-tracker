@@ -8,7 +8,7 @@
     "elev_geoid": -1930.194946,
     "dist_total_m": 45126.078,
     "RMC": "91_970",
-    "fetchedAt": "2026-10-11T12:14:27.586Z"
+    "fetchedAt": "2026-10-12T14:37:54.336Z"
   },
   "curiosity": {
     "id": "curiosity",
@@ -19,7 +19,7 @@
     "elev_geoid": -3479.905,
     "dist_total_m": 38383.67,
     "RMC": "125_558",
-    "fetchedAt": "2026-10-11T12:14:27.586Z"
+    "fetchedAt": "2026-10-12T14:37:54.336Z"
   },
-  "lastUpdated": "2026-10-11T12:14:27.586Z"
+  "lastUpdated": "2026-10-12T14:37:54.336Z"
 }
