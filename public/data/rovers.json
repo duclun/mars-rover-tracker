@@ -8,18 +8,18 @@
     "elev_geoid": -1936.366943,
     "dist_total_m": 45245.71,
     "RMC": "93_0",
-    "fetchedAt": "2026-11-13T14:02:00.665Z"
+    "fetchedAt": "2026-11-14T13:04:28.119Z"
   },
   "curiosity": {
     "id": "curiosity",
     "name": "Curiosity",
-    "currentSol": 5070,
-    "lat": -4.82567778,
-    "lon": 137.3891532,
-    "elev_geoid": -3473.684,
-    "dist_total_m": 38610.11,
-    "RMC": "125_2274",
-    "fetchedAt": "2026-11-13T14:02:00.665Z"
+    "currentSol": 5073,
+    "lat": -4.82602331,
+    "lon": 137.388886,
+    "elev_geoid": -3472.085,
+    "dist_total_m": 38638.02,
+    "RMC": "125_2490",
+    "fetchedAt": "2026-11-14T13:04:28.119Z"
   },
-  "lastUpdated": "2026-11-13T14:02:00.665Z"
+  "lastUpdated": "2026-11-14T13:04:28.119Z"
 }
